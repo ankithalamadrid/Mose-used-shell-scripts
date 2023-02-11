@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Define the list of servers to check
+servers=(server1 server2 server3 server4)
+
+# Loop through the list of servers
+for server in "${servers[@]}"; do
+  echo "Checking the status of $server..."
+  # Use the ping command to check if the server is reachable
+  ping -c 3 $server > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "$server is up"
+  else
+    echo "$server is down"
+  fi
+done

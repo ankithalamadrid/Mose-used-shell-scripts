@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Define the list of servers to check
+servers=(server1 server2 server3 server4)
+
+# Loop through the list of servers
+for server in "${servers[@]}"; do
+  echo "Checking the patch status of $server..."
+  # Use ssh to connect to the server and run the command to check the patch status
+  ssh $server "cat /var/log/yum.log | grep 'update'" > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo "$server has been updated"
+  else
+    echo "$server has not been updated"
+  fi
+done
