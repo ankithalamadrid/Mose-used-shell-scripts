@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Define the list of servers to log in to
+servers=(server1 server2 server3 server4)
+
+# Define the username
+username=<your_username>
+
+# Loop through the list of servers
+for server in "${servers[@]}"; do
+  echo "Logging in to $server..."
+  # Use sshpass to log in to the server with a username and password
+  sshpass -p <your_password> ssh $username@$server
+done

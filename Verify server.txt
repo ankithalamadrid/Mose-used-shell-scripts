@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Check the patch installation log to ensure that all patches were installed correctly
+if grep -q "Error" /var/log/patches/patch.log; then
+  echo "There was an error installing one or more patches. Check the patch log for more details."
+  exit 1
+else
+  echo "All patches were installed successfully."
+fi
+
+# Check the system logs for any errors or issues related to the patching process
+if grep -q "Error" /var/log/*; then
+  echo "There were errors in the system logs after patching. Check the logs for more details."
+  exit 1
+else
+  echo "No errors were found in the system logs."
+fi
+
+# Verify that all services are running correctly
+services=(apache2 mysql nginx)
+for service in "${services[@]}"; do
+  if systemctl is-active --quiet "$service"; then
+    echo "$service is running."
+  else
+    echo "$service is not running. Start the service and check its status."
+  fi
+done
+
+# Check that the server is responding to requests
+if curl -s --head http://localhost | grep "200 OK" > /dev/null; then
+  echo "The server is responding to requests."
+else
+  echo "The server is not responding to requests. Check the server logs for more details."
+  exit 1
+fi
+
+# Check any custom applications or scripts
+if [[ -f /usr/local/bin/custom_script.sh ]]; then
+  if bash /usr/local/bin/custom_script.sh; then
+    echo "Custom script is functioning correctly."
+  else
+    echo "Custom script is not functioning correctly. Check the script for errors."
+    exit 1
+  fi
+fi
+
+echo "Server verification complete. No issues were detected."
